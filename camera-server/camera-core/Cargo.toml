@@ -14,8 +14,16 @@ thiserror = { workspace = true }
 tokio = { workspace = true }
 
 # 特定依赖
-v4l = { workspace = true }
-ffmpeg-next = { workspace = true }
+# 暂时注释掉ffmpeg-next，因为与系统FFmpeg版本不兼容
+# ffmpeg-next = { workspace = true }
 image = { workspace = true }
-nokhwa = { workspace = true }
 uuid = { workspace = true }
+chrono = { workspace = true }
+
+# 平台特定依赖
+[target.'cfg(target_os = "linux")'.dependencies]
+v4l = { workspace = true }
+nokhwa = { workspace = true, features = ["input-v4l"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+nokhwa = { workspace = true, features = ["input-avfoundation"] }

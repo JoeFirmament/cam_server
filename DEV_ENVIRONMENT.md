@@ -4,15 +4,10 @@
 
 **日期**: 2025年5月13日
 
-**操作系统**: macOS (Darwin Kernel Version 24.4.0)
-**CPU架构**: ARM64 (Apple Silicon)
-**Rust版本**: 1.86.0 (adf9b6ad1 2025-02-28)
-
-## 目标部署环境
-
 **设备**: RK3588开发板（如香橙派5 Plus）
-**操作系统**: Radxa OS 或 Armbian（基于Debian/Ubuntu的RK3588优化版本）
-**CPU架构**: ARM64
+**操作系统**: Armbian（基于Debian/Ubuntu的RK3588优化版本）
+**CPU架构**: ARM64 (AArch64)
+**Rust版本**: 1.86.0 (adf9b6ad1 2025-02-28)
 
 ## 开发工具
 
@@ -25,10 +20,9 @@
 ## 主要依赖库
 
 - **Web框架**: Actix-web 4.3
-- **摄像头接口**: 
-  - Linux: nokhwa 0.10 (input-v4l feature)
-  - macOS: nokhwa 0.10 (input-avfoundation feature)
-- **视频处理**: ffmpeg-next 6.0 (暂时注释掉，与系统FFmpeg版本不兼容)
+- **摄像头接口**: nokhwa 0.10 (input-v4l feature)
+- **视频处理**: ffmpeg-next 6.0
+- **硬件加速**: RK3588 MPP (Media Process Platform)
 - **图像处理**: image 0.24
 - **序列化/反序列化**: serde 1.0
 - **异步运行时**: tokio 1.28
@@ -36,27 +30,11 @@
 
 ## 开发模式
 
-项目采用混合开发模式：
-1. 在Mac上开发基础功能和跨平台代码
-2. 通过GitHub同步到RK3588开发板
-3. 在RK3588上开发和测试硬件相关功能
-4. 最终在RK3588上部署和运行
+项目采用直接在RK3588上开发的模式：
 
-## 交叉编译设置
-
-```bash
-# 安装交叉编译工具链
-rustup target add aarch64-unknown-linux-gnu
-
-# 配置Cargo
-cat >> ~/.cargo/config << EOF
-[target.aarch64-unknown-linux-gnu]
-linker = "aarch64-linux-gnu-gcc"
-EOF
-
-# 安装必要的系统依赖
-brew install aarch64-linux-gnu-binutils
-```
+1. 在RK3588上进行全栈开发
+2. 使用Git进行版本控制和代码管理
+3. 直接在RK3588上测试和部署
 
 ## 测试环境
 
@@ -66,50 +44,27 @@ brew install aarch64-linux-gnu-binutils
 
 ## 注意事项
 
-1. **平台差异**:
-   - Mac使用AVFoundation访问摄像头
-   - Linux(RK3588)使用V4L2访问摄像头
-   - 代码需要处理平台差异，提供统一的API
+1. **硬件特性**:
+   - 充分利用RK3588的硬件加速能力
+   - 优化V4L2摄像头接口性能
+   - 使用MPP (Media Process Platform) 进行视频编解码
 
-2. **硬件加速**:
-   - Mac上暂时使用软件编码
-   - RK3588上将使用硬件编码加速
-   - 需要针对不同平台优化编码参数
+2. **性能优化**:
+   - 使用硬件编码加速视频处理
+   - 优化内存使用和CPU负载
+   - 针对ARM架构优化代码
 
 3. **依赖兼容性**:
-   - 某些依赖可能在不同平台上有兼容性问题
-   - 使用条件编译和特性标志处理平台特定代码
+   - 确保所有依赖库在ARM64架构上兼容
+   - 使用特性标志处理平台特定代码
+   - 避免使用不支持ARM64的依赖
 
 4. **开发流程**:
-   - 在Mac上开发和测试基础功能
-   - 定期同步到RK3588测试硬件相关功能
-   - 使用Git分支管理不同平台的特定代码
+   - 直接在RK3588上开发和测试所有功能
+   - 使用Git进行版本控制
+   - 定期备份代码到GitHub仓库
 
 ## 环境设置脚本
-
-### Mac开发环境设置
-
-```bash
-#!/bin/bash
-# setup_mac_dev.sh
-
-# 安装Rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-# 安装必要的系统依赖
-brew install ffmpeg pkg-config
-
-# 安装交叉编译工具链
-rustup target add aarch64-unknown-linux-gnu
-brew install aarch64-linux-gnu-binutils
-
-# 克隆代码仓库
-git clone git@github.com:JoeFirmament/cam_server.git
-cd cam_server
-
-# 构建项目
-cargo build --workspace
-```
 
 ### RK3588开发环境设置
 
@@ -131,7 +86,14 @@ sudo apt-get install -y \
     libavcodec-dev \
     libavformat-dev \
     libavutil-dev \
-    libswscale-dev
+    libswscale-dev \
+    v4l-utils \
+    ffmpeg
+
+# 安装RK3588特定的开发库
+sudo apt-get install -y \
+    librga-dev \
+    rockchip-mpp-dev
 
 # 克隆代码仓库
 git clone git@github.com:JoeFirmament/cam_server.git
