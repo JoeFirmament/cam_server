@@ -1,0 +1,10 @@
+[package]
+name = "camera_detector"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+camera-core = { path = "../../camera-server/camera-core" }
+anyhow = "1.0"
+env_logger = "0.10"
+log = "0.4"

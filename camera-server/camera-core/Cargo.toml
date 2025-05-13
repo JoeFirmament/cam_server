@@ -17,3 +17,5 @@ tokio = { workspace = true }
 v4l = { workspace = true }
 ffmpeg-next = { workspace = true }
 image = { workspace = true }
+nokhwa = { workspace = true }
+uuid = { workspace = true }

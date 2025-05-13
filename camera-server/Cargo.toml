@@ -29,3 +29,7 @@ walkdir = "2.3"
 zip = "0.6"
 sysinfo = "0.29"
 clap = { version = "4.3", features = ["derive"] }
+
+# 跨平台摄像头支持
+nokhwa = { version = "0.10", features = ["input-avfoundation", "input-v4l"] }
+uuid = { version = "1.3", features = ["v4", "fast-rng"] }
