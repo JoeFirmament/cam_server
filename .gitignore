@@ -1,0 +1,39 @@
+# Rust编译输出
+/target/
+**/target/
+Cargo.lock
+
+# IDE和编辑器文件
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# 日志文件
+*.log
+logs/
+
+# 项目特定文件
+/data/
+/recordings/
+/frames/
+/packages/
+
+# 环境变量文件
+.env
+.env.local
+
+# 构建输出
+/dist/
+/build/
+
+# 依赖目录
+/node_modules/
+
+# 测试覆盖率报告
+/coverage/

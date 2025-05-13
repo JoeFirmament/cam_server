@@ -1,0 +1,22 @@
+[package]
+name = "camera-api"
+version = "0.1.0"
+edition = "2021"
+description = "API服务和Web服务器"
+
+[dependencies]
+# 从工作空间继承
+serde = { workspace = true }
+serde_json = { workspace = true }
+log = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+actix-web = { workspace = true }
+actix-files = { workspace = true }
+actix-cors = { workspace = true }
+
+# 内部依赖
+camera-core = { path = "../camera-core" }
+camera-storage = { path = "../camera-storage" }
+camera-monitor = { path = "../camera-monitor" }

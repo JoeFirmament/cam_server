@@ -1,0 +1,18 @@
+[package]
+name = "camera-monitor"
+version = "0.1.0"
+edition = "2021"
+description = "系统监控功能"
+
+[dependencies]
+# 从工作空间继承
+serde = { workspace = true }
+serde_json = { workspace = true }
+log = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+sysinfo = { workspace = true }
+
+# 内部依赖
+camera-core = { path = "../camera-core" }

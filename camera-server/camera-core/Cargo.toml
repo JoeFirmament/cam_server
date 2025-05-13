@@ -1,0 +1,19 @@
+[package]
+name = "camera-core"
+version = "0.1.0"
+edition = "2021"
+description = "摄像头采集和视频处理核心功能"
+
+[dependencies]
+# 从工作空间继承
+serde = { workspace = true }
+serde_json = { workspace = true }
+log = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+
+# 特定依赖
+v4l = { workspace = true }
+ffmpeg-next = { workspace = true }
+image = { workspace = true }

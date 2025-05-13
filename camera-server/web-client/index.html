@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RK3588摄像头服务器</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="assets/favicon.ico">
+</head>
+<body>
+    <header>
+        <h1>RK3588摄像头服务器</h1>
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-label">摄像头状态:</span>
+                <span id="camera-status" class="status-value">未连接</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">录制状态:</span>
+                <span id="recording-status" class="status-value">未录制</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">系统状态:</span>
+                <span id="system-status" class="status-value">正常</span>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <div class="panel">
+                <h2>摄像头控制</h2>
+                <div class="preview-container">
+                    <div id="camera-preview">
+                        <div class="no-preview">未连接摄像头</div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <button id="camera-connect" class="btn primary">连接摄像头</button>
+                    <button id="camera-disconnect" class="btn danger" disabled>断开摄像头</button>
+                </div>
+                <div class="settings-group">
+                    <h3>摄像头设置</h3>
+                    <div class="form-group">
+                        <label for="camera-device">设备:</label>
+                        <select id="camera-device">
+                            <option value="/dev/video0">/dev/video0</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="camera-resolution">分辨率:</label>
+                        <select id="camera-resolution">
+                            <option value="1920x1080">1920x1080</option>
+                            <option value="1280x720">1280x720</option>
+                            <option value="640x480">640x480</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="camera-fps">帧率:</label>
+                        <select id="camera-fps">
+                            <option value="30">30 fps</option>
+                            <option value="25">25 fps</option>
+                            <option value="15">15 fps</option>
+                        </select>
+                    </div>
+                    <button id="camera-apply" class="btn secondary">应用设置</button>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2>录制控制</h2>
+                <div class="control-group">
+                    <button id="recording-start" class="btn primary" disabled>开始录制</button>
+                    <button id="recording-stop" class="btn danger" disabled>停止录制</button>
+                </div>
+                <div class="settings-group">
+                    <h3>录制设置</h3>
+                    <div class="form-group">
+                        <label for="recording-format">格式:</label>
+                        <select id="recording-format">
+                            <option value="mp4">MP4 (H.264)</option>
+                            <option value="mkv">MKV (H.265)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recording-bitrate">比特率:</label>
+                        <select id="recording-bitrate">
+                            <option value="4000000">4 Mbps</option>
+                            <option value="8000000">8 Mbps</option>
+                            <option value="16000000">16 Mbps</option>
+                        </select>
+                    </div>
+                    <button id="recording-apply" class="btn secondary">应用设置</button>
+                </div>
+                <div class="file-list">
+                    <h3>录制文件</h3>
+                    <div id="recording-files" class="file-container">
+                        <div class="no-files">无录制文件</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2>视频拆分</h2>
+                <div class="control-group">
+                    <button id="split-start" class="btn primary" disabled>开始拆分</button>
+                    <button id="split-cancel" class="btn danger" disabled>取消拆分</button>
+                </div>
+                <div class="settings-group">
+                    <h3>拆分设置</h3>
+                    <div class="form-group">
+                        <label for="split-format">图像格式:</label>
+                        <select id="split-format">
+                            <option value="jpg">JPG</option>
+                            <option value="png">PNG</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="split-framerate">提取帧率:</label>
+                        <select id="split-framerate">
+                            <option value="1">1 fps</option>
+                            <option value="5">5 fps</option>
+                            <option value="10">10 fps</option>
+                            <option value="25">25 fps</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="split-quality">图像质量:</label>
+                        <input type="range" id="split-quality" min="1" max="100" value="90">
+                        <span id="split-quality-value">90</span>
+                    </div>
+                    <button id="split-apply" class="btn secondary">应用设置</button>
+                </div>
+                <div class="file-list">
+                    <h3>拆分文件夹</h3>
+                    <div id="split-folders" class="file-container">
+                        <div class="no-files">无拆分文件夹</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2>系统状态</h2>
+                <div class="system-info">
+                    <div class="info-group">
+                        <h3>CPU</h3>
+                        <div class="progress-bar">
+                            <div id="cpu-usage" class="progress" style="width: 0%;">0%</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">核心数:</span>
+                            <span id="cpu-cores" class="info-value">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">温度:</span>
+                            <span id="cpu-temp" class="info-value">-</span>
+                        </div>
+                    </div>
+                    <div class="info-group">
+                        <h3>内存</h3>
+                        <div class="progress-bar">
+                            <div id="memory-usage" class="progress" style="width: 0%;">0%</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">总计:</span>
+                            <span id="memory-total" class="info-value">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">已用:</span>
+                            <span id="memory-used" class="info-value">-</span>
+                        </div>
+                    </div>
+                    <div class="info-group">
+                        <h3>存储</h3>
+                        <div class="progress-bar">
+                            <div id="storage-usage" class="progress" style="width: 0%;">0%</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">总计:</span>
+                            <span id="storage-total" class="info-value">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">已用:</span>
+                            <span id="storage-used" class="info-value">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p>RK3588摄像头服务器 &copy; 2025</p>
+    </footer>
+    
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
